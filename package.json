@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@11ty/eleventy": "^2.0.1"
+  },
+  "scripts": {
+    "build": "eleventy",
+    "start": "npm run build -- --serve"
+  }
+}
