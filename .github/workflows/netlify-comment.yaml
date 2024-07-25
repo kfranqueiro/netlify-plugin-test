@@ -1,0 +1,24 @@
+on:
+  issue_comment:
+    types: [edited]
+permissions:
+  pull-requests: write
+
+jobs:
+  netlify:
+    name: Add Preview URLs Comment
+    if: ${{ github.event.issue.pull_request && github.event.comment.user.login == 'netlify[bot]' && contains(github.event.comment.body, 'ready!') }}
+    runs-on: ubuntu-22.04
+    steps:
+      - id: parse
+        run: |
+          echo preview_url=$(echo '${{ github.event.comment.body }}' | egrep -o 'https://[a-z0-9-]+\.netlify\.app' | head -1) >> "$GITHUB_OUTPUT"
+          echo preview_date=$(date -Ru) >> "$GITHUB_OUTPUT"
+      - uses: thollander/actions-comment-pull-request@v2
+        with:
+          comment_tag: pr-netlify-urls
+          message: |
+            Preview available (last updated ${{ steps.parse.outputs.preview_date }})
+            
+            - [Techniques](${{ steps.parse.outputs.preview_url }}/techniques)
+            - [Understanding](${{ steps.parse.outputs.preview_url }}/understanding)
